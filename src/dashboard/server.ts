@@ -28,7 +28,7 @@ export function startDashboard(queue: AnyQueue): http.Server {
     try {
       // ---- API ----
       if (url.pathname === '/api/queue') {
-        const counts = await queue.getJobCounts('waiting', 'active', 'completed', 'failed');
+        const counts = await queue.getJobCounts('waiting', 'active', 'delayed', 'completed', 'failed');
         return json(200, counts);
       }
 
@@ -146,7 +146,7 @@ async function refresh() {
   try {
     const q = await (await fetch('/api/queue')).json();
     document.getElementById('stats').innerHTML =
-      ['waiting','active','completed','failed'].map(k =>
+      ['waiting','active','delayed','completed','failed'].map(k =>
         '<div class="stat"><b>' + (q[k] ?? 0) + '</b><span>' + k + '</span></div>').join('');
   } catch {}
   try {

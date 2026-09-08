@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.2.0 — Scheduled publishing (2026-09-08)
+
+- `--publish-at` flag on the CLI — schedule a video for a future time.
+  Uses BullMQ durable delayed jobs: survives restarts, no cron needed.
+- Naive times (`2026-09-10 18:00`) interpreted in `PUBLISH_TZ` (default Asia/Kolkata);
+  full ISO 8601 with zone also accepted.
+- Dashboard now shows `delayed` jobs in the queue stats.
+- Phase 4 real external video connectors (Veo / Seedance / LTX) and
+  config-order routing: `video: Veo → Seedance → LTX → local FFmpeg floor`.
+
+
 ## 0.1.0 — Open Source Edition (2026-09-08)
 
 First public release. Core philosophy: **no artificial credits, local-first, external APIs optional**.

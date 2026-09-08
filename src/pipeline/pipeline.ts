@@ -15,6 +15,7 @@ export interface MediaJob {
   publish: boolean;          // false = draft/simulate only
   autonomous?: boolean;     // true = publish without human approval gate
   makeThumbnail?: boolean;   // default true
+  publishAt?: string;       // scheduled fire time (delayed BullMQ job)
 }
 
 export interface PipelineResult {

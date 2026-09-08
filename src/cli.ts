@@ -6,8 +6,10 @@
  *   npm run cli -- --topic "Why local-first AI wins" --platform youtube
  *   npm run cli -- --topic "Gym promo" --platform instagram --publish --autonomous
  *   npm run cli -- --topic "Demo" --no-thumbnail
+ *   npm run cli -- --topic "Dussehra special" --publish-at "2026-10-20 18:00"
  */
 import { Queue } from 'bullmq';
+import { parsePublishAt } from './schedule.js';
 
 const args = process.argv.slice(2);
 const flag = (name: string): string | undefined => {
@@ -37,13 +39,27 @@ const port = portPart ? Number(portPart) : 6379;
 
 const queue = new Queue('media-tasks', { connection: { host, port } });
 
-const job = await queue.add('media', {
-  topic,
-  platform,
-  publish: has('publish'),
-  autonomous: has('autonomous'),
-  makeThumbnail: !has('no-thumbnail'),
-});
+const publishAt = flag('publish-at');
+let jobOpts: { delay?: number } = {};
+let scheduledNote = '';
+if (publishAt) {
+  const scheduled = parsePublishAt(publishAt);
+  jobOpts = { delay: scheduled.delayMs };
+  scheduledNote = `\n   fires at  : ${scheduled.utc.toISOString()}`;
+}
+
+const job = await queue.add(
+  'media',
+  {
+    topic,
+    platform,
+    publish: has('publish'),
+    autonomous: has('autonomous'),
+    makeThumbnail: !has('no-thumbnail'),
+    publishAt: publishAt,
+  },
+  jobOpts
+);
 
 console.log(`✅ Job queued: ${job.id}`);
 console.log(`   topic     : ${topic}`);
@@ -53,6 +69,7 @@ console.log(
     has('publish') ? (has('autonomous') ? 'autonomous publish' : 'approval mode') : 'draft only'
   }`
 );
+console.log(scheduledNote);
 console.log(`   dashboard : http://localhost:${process.env.DASHBOARD_PORT ?? 3000}`);
 
 await queue.close();

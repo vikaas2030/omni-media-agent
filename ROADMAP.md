@@ -27,7 +27,7 @@
 - [x] Facebook Page video upload via Graph API (multipart)
 - [x] Approval vs autonomous mode — approval records in Redis, dashboard Approve/Reject publishes directly
 - [x] Dependency-free dashboard (native http): queue stats, pending approvals, recent jobs with LOCAL/EXTERNAL badges, /media file serving. **Verified: boot + API + badges pass**
-- [ ] Scheduled publishing (publish_at) — carried to Phase 5
+- [x] Scheduled publishing — --publish-at via BullMQ delayed jobs (TZ-aware, restart-safe)
 
 ## Phase 4 — External video connectors (code-complete)
 - [x] Veo — Gemini API predictLongRunning + operation polling + video download

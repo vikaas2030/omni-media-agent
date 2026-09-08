@@ -32,6 +32,12 @@ Queue your first video (draft only, approval mode):
 npm run cli -- --topic "Why local-first AI wins" --platform youtube
 ```
 
+Schedule one for a future time (delayed job, survives restarts — naive times use `PUBLISH_TZ`, default Asia/Kolkata):
+
+```bash
+npm run cli -- --topic "Dussehra special" --platform youtube --publish-at "2026-10-20 18:00"
+```
+
 Then open the dashboard, review the draft + its LOCAL/EXTERNAL badges, and Approve → publish (once platform tokens are configured).
 
 ## Architecture
@@ -80,7 +86,7 @@ Details in [ARCHITECTURE.md](ARCHITECTURE.md). Build phases in [ROADMAP.md](ROAD
 | Instagram Reels / Facebook Page | ✅ | Official API, your tokens |
 | Approval vs autonomous modes + dashboard | ✅ | Native http, LOCAL/EXTERNAL badges |
 | External video connectors (Seedance/LTX/Veo) | 🔜 Phase 4 | Bring-your-own-key stubs |
-| Scheduled publishing | 🔜 Phase 5 | — |
+| Scheduled publishing (`--publish-at`) | ✅ | BullMQ delayed jobs, TZ-aware |
 
 ## Configuration
 
