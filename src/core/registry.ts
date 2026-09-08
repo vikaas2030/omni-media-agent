@@ -1,7 +1,29 @@
+import { readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
 import { Provider, Modality, NoProviderAvailableError } from './types.js';
+
+interface RoutingConfig {
+  routing: Record<string, string[]>;
+}
+
+/**
+ * The chain order in config/models.json is AUTHORITATIVE — tried top to bottom.
+ * For most modalities that means local first. For video it means:
+ * external (if you configured a key) first, local FFmpeg floor last.
+ */
+function loadRouting(): Record<string, string[]> {
+  try {
+    const path = new URL('../../config/models.json', import.meta.url);
+    const cfg = JSON.parse(readFileSync(path, 'utf-8')) as RoutingConfig;
+    return cfg.routing ?? {};
+  } catch {
+    return {}; // providers still resolvable via register/chain fallback below
+  }
+}
 
 export class Registry {
   private providers = new Map<string, Provider>();
+  private routing = loadRouting();
 
   register(p: Provider): void {
     this.providers.set(p.id, p);
@@ -11,11 +33,19 @@ export class Registry {
     return this.providers.get(id);
   }
 
-  /** Resolve the ordered fallback chain for a modality. */
+  /** Ordered fallback chain for a modality — config order first, then any
+   *  registered providers not mentioned in config (local before external). */
   chain(modality: Modality): Provider[] {
-    return [...this.providers.values()]
-      .filter((p) => p.modality === modality)
-      .sort((a, b) => rank(a) - rank(b));
+    const ordered = (this.routing[modality] ?? [])
+      .map((id) => this.providers.get(id))
+      .filter((p): p is Provider => !!p);
+
+    const configured = new Set(ordered.map((p) => p.id));
+    const rest = [...this.providers.values()]
+      .filter((p) => p.modality === modality && !configured.has(p.id))
+      .sort((a, b) => (a.type === 'local' ? -1 : 0) - (b.type === 'local' ? -1 : 0));
+
+    return [...ordered, ...rest];
   }
 
   /** Route a request through the chain with health checks and external gating. */
@@ -33,9 +63,4 @@ export class Registry {
     }
     throw new NoProviderAvailableError(modality, tried);
   }
-}
-
-// local providers always rank before external ones — local-first fallback.
-function rank(p: Provider): number {
-  return p.type === 'local' ? 0 : 1;
 }

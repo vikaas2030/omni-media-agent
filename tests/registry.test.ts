@@ -6,11 +6,12 @@ import { NoProviderAvailableError, Provider } from '../src/core/types.js';
 function fakeProvider(
   id: string,
   type: 'local' | 'external',
+  modality: 'video' | 'llm' = 'video',
   healthy = true
 ): Provider {
   return {
     id,
-    modality: 'video',
+    modality,
     type,
     health: async () => healthy,
     generate: async () => {
@@ -19,28 +20,36 @@ function fakeProvider(
   };
 }
 
-test('local providers always rank before external in the chain', async () => {
+test('chain follows config/models.json order (video: external first, local floor last)', async () => {
   const reg = new Registry();
-  reg.register(fakeProvider('external:seedance', 'external'));
+  // ids that exist in config/models.json routing chains
   reg.register(fakeProvider('local:ffmpeg-anim', 'local'));
+  reg.register(fakeProvider('external:veo', 'external'));
+  reg.register(fakeProvider('external:seedance', 'external'));
+
   const chain = reg.chain('video');
-  assert.equal(chain[0].id, 'local:ffmpeg-anim');
-  assert.equal(chain[1].id, 'external:seedance');
+  assert.equal(chain.map((p) => p.id).join(','), 'external:veo,external:seedance,local:ffmpeg-anim');
 });
 
-test('route() skips unhealthy providers', async () => {
+test('route() skips unhealthy providers down the chain', async () => {
   const reg = new Registry();
-  reg.register(fakeProvider('local:dead', 'local', false));
-  reg.register(fakeProvider('external:alive', 'external', true));
+  reg.register(fakeProvider('external:veo', 'external', 'video', false));
+  reg.register(fakeProvider('local:ffmpeg-anim', 'local', 'video', true));
   const p = await reg.route('video', { allowExternal: true });
-  assert.equal(p.id, 'external:alive');
+  assert.equal(p.id, 'local:ffmpeg-anim');
 });
 
 test('route() never picks external when allowExternal is false', async () => {
   const reg = new Registry();
-  reg.register(fakeProvider('external:only', 'external', true));
-  await assert.rejects(
-    () => reg.route('video', { allowExternal: false }),
-    NoProviderAvailableError
-  );
+  reg.register(fakeProvider('external:veo', 'external'));
+  reg.register(fakeProvider('local:ffmpeg-anim', 'local'));
+  const p = await reg.route('video', { allowExternal: false });
+  assert.equal(p.type, 'local');
+});
+
+test('route() throws when nothing in the chain is available', async () => {
+  const reg = new Registry();
+  reg.register(fakeProvider('external:veo', 'external', 'video', false));
+  reg.register(fakeProvider('local:ffmpeg-anim', 'local', 'video', false));
+  await assert.rejects(() => reg.route('video', {}), NoProviderAvailableError);
 });

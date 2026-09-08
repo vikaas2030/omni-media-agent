@@ -1,18 +1,11 @@
 {
-  "$comment": "Routing chains per modality. Tried in order — fallback goes down the list. Prefix local: or external:",
+  "$comment": "Routing chains per modality. The ORDER HERE IS AUTHORITATIVE — the router tries top to bottom and falls back on failure. Video is deliberately external-first (best quality if you bring a key) with the local FFmpeg floor last, so the agent works with zero keys and never dies when an external quota runs out.",
   "routing": {
     "llm": ["local:ollama"],
-    "image": ["local:comfyui", "external:stub"],
+    "image": ["local:comfyui"],
     "stt": ["local:whisper"],
     "tts": ["local:piper"],
-    "video": ["external:stub", "local:ffmpeg-anim"],
-    "avatar": ["external:stub"],
-    "render": ["local:ffmpeg-render"]
-  },
-  "externalProviders": [
-    { "id": "seedance", "modality": "video", "envKey": "SEEDANCE_API_KEY", "limitsNote": "Seedance provider limits & fees apply" },
-    { "id": "ltx", "modality": "video", "envKey": "LTX_API_KEY", "limitsNote": "LTX provider limits & fees apply" },
-    { "id": "veo-flow", "modality": "video", "envKey": "VEO_API_KEY", "limitsNote": "Google Flow/Veo provider limits & fees apply" },
-    { "id": "avatar-api", "modality": "avatar", "envKey": "AVATAR_API_KEY", "limitsNote": "Avatar provider limits & fees apply" }
-  ]
+    "video": ["external:veo", "external:seedance", "external:ltx", "local:ffmpeg-anim"],
+    "avatar": ["external:avatar-api"]
+  }
 }

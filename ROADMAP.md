@@ -29,10 +29,14 @@
 - [x] Dependency-free dashboard (native http): queue stats, pending approvals, recent jobs with LOCAL/EXTERNAL badges, /media file serving. **Verified: boot + API + badges pass**
 - [ ] Scheduled publishing (publish_at) — carried to Phase 5
 
-## Phase 4 — External connectors
-- [ ] Seedance, LTX, Veo/Flow video connectors
-- [ ] Avatar API connector
-- [ ] Per-connector external spend *observability* (never enforcement)
+## Phase 4 — External video connectors (code-complete)
+- [x] Veo — Gemini API predictLongRunning + operation polling + video download
+- [x] Seedance — BytePlus ModelArk tasks API (create → poll → video_url)
+- [x] LTX — fal.ai queue API (submit → poll status → fetch response)
+- [x] Avatar API connector — key-gated stub (vendors differ; implement against yours)
+- [x] Config-order routing made authoritative: video = Veo → Seedance → LTX → local FFmpeg floor
+      (external first for quality when a key exists; zero keys = pure local, never broken)
+- [ ] Per-connector external spend *observability* (never enforcement) — optional, on request
 
 ## Phase 5 — Hardening & open-sourcing (release-ready)
 - [x] MIT license, CONTRIBUTING.md with non-negotiables (no metering, local-first, fallback)

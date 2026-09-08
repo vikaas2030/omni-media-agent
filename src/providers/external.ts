@@ -1,4 +1,7 @@
 import { Provider, GenerationRequest, GenerationResult, Modality } from '../core/types.js';
+import { generateWithVeo } from './veo.js';
+import { generateWithSeedance } from './seedance.js';
+import { generateWithLtx } from './ltx.js';
 
 const env = (k: string) => (process.env[k] ?? '').trim();
 
@@ -7,8 +10,9 @@ const env = (k: string) => (process.env[k] ?? '').trim();
  * - They only activate when their API key is present in the environment.
  * - They MUST carry a limitsNote — "Provider's own limits apply" is shown
  *   in the dashboard, never hidden in a footnote.
- * - When they fail or their quota is exhausted, the router falls back to
- *   local/open-source providers. The agent does NOT go down with them.
+ * - When they fail or their quota is exhausted, the router falls back down
+ *   the config chain (usually to a local/open-source provider). The agent
+ *   does NOT go down with them.
  */
 abstract class ExternalProvider implements Provider {
   type = 'external' as const;
@@ -21,48 +25,70 @@ abstract class ExternalProvider implements Provider {
     return env(this.envKey).length > 0;
   }
 
-  async generate(req: GenerationRequest): Promise<GenerationResult> {
-    // TODO per connector (phase 4): real API call with the key from env.
-    // Cost recorded is observability ONLY — the software never enforces limits.
-    throw new Error(`${this.id}: connector not implemented yet (bring-your-own-key)`);
-  }
+  abstract generate(req: GenerationRequest): Promise<GenerationResult>;
 
-  protected note(): string {
-    return `${this.id}: EXTERNAL — ${this.limitsNote}`;
+  protected result(providerId: string, artifactPath: string): GenerationResult {
+    return {
+      artifactPath,
+      providerId,
+      providerType: 'external',
+      fallbackChainUsed: [],
+      warnings: [],
+    };
   }
 }
 
+/** Google Veo — Gemini API. */
+class VeoProvider extends ExternalProvider {
+  id = 'external:veo';
+  modality = 'video' as const;
+  limitsNote = 'Google Veo/Flow usage limits & fees apply';
+  protected envKey = 'VEO_API_KEY';
+  async generate(req: GenerationRequest): Promise<GenerationResult> {
+    const artifactPath = await generateWithVeo(String(req.input));
+    return this.result(this.id, artifactPath);
+  }
+}
+
+/** Seedance — BytePlus ModelArk. */
 class SeedanceProvider extends ExternalProvider {
   id = 'external:seedance';
   modality = 'video' as const;
   limitsNote = 'Seedance usage limits & fees apply';
   protected envKey = 'SEEDANCE_API_KEY';
+  async generate(req: GenerationRequest): Promise<GenerationResult> {
+    const artifactPath = await generateWithSeedance(String(req.input));
+    return this.result(this.id, artifactPath);
+  }
 }
 
+/** LTX-Video — fal.ai queue. */
 class LtxProvider extends ExternalProvider {
   id = 'external:ltx';
   modality = 'video' as const;
-  limitsNote = 'LTX usage limits & fees apply';
+  limitsNote = 'LTX via fal.ai usage limits & fees apply';
   protected envKey = 'LTX_API_KEY';
+  async generate(req: GenerationRequest): Promise<GenerationResult> {
+    const artifactPath = await generateWithLtx(String(req.input));
+    return this.result(this.id, artifactPath);
+  }
 }
 
-class VeoFlowProvider extends ExternalProvider {
-  id = 'external:veo-flow';
-  modality = 'video' as const;
-  limitsNote = 'Google Flow/Veo usage limits & fees apply';
-  protected envKey = 'VEO_API_KEY';
-}
-
+/** Avatar APIs (HeyGen/D-ID style) — bring-your-own-key, one generic shape. */
 class AvatarApiProvider extends ExternalProvider {
   id = 'external:avatar-api';
   modality = 'avatar' as const;
   limitsNote = 'Avatar provider usage limits & fees apply';
   protected envKey = 'AVATAR_API_KEY';
+  async generate(_req: GenerationRequest): Promise<GenerationResult> {
+    // Avatar providers differ wildly — implement against your vendor here.
+    throw new Error('avatar-api: connector not implemented yet (bring-your-own-key)');
+  }
 }
 
 export const externalProviders: Provider[] = [
+  new VeoProvider(),
   new SeedanceProvider(),
   new LtxProvider(),
-  new VeoFlowProvider(),
   new AvatarApiProvider(),
 ];
