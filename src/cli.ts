@@ -24,7 +24,7 @@ const validPlatforms = ['youtube', 'instagram', 'facebook'];
 
 if (!topic) {
   console.error(
-    'Usage: omni --topic "Your video topic" [--platform youtube|instagram|facebook] [--publish] [--autonomous] [--no-thumbnail]'
+    'Usage: omni --topic "Your video topic" [--platform youtube|instagram|facebook] [--publish] [--autonomous] [--no-thumbnail] [--presenter]'
   );
   process.exit(1);
 }
@@ -57,6 +57,7 @@ const job = await queue.add(
     autonomous: has('autonomous'),
     makeThumbnail: !has('no-thumbnail'),
     publishAt: publishAt,
+    presenter: has('presenter'),
   },
   jobOpts
 );

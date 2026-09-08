@@ -6,6 +6,7 @@ import { generateSeoMetadata, SeoMetadata } from './seo.js';
 import { generateThumbnail } from './thumbnail.js';
 import { Publisher, getPublisher } from '../publish/publishers.js';
 import { createApproval } from '../approval/approvals.js';
+import { concatWithIntro } from './concat.js';
 
 export interface MediaJob {
   topic: string;
@@ -16,6 +17,7 @@ export interface MediaJob {
   autonomous?: boolean;     // true = publish without human approval gate
   makeThumbnail?: boolean;   // default true
   publishAt?: string;       // scheduled fire time (delayed BullMQ job)
+  presenter?: boolean;      // prepend an avatar presenter intro (external, your key)
 }
 
 export interface PipelineResult {
@@ -28,6 +30,7 @@ export interface PipelineResult {
   rights: ReturnType<typeof rightsPolicyCheck>;
   published: boolean;
   approvalId?: string;
+  externalSpendUsd?: number; // observability ONLY — our software meters nothing
   log: string[];
 }
 
@@ -37,6 +40,11 @@ export interface PipelineResult {
  */
 export async function runPipeline(job: MediaJob, registry: Registry): Promise<PipelineResult> {
   const log: string[] = [];
+  const spendings: number[] = [];
+  const track = <T extends { externalCostUsd?: number }>(r: T): T => {
+    if (r.externalCostUsd) spendings.push(r.externalCostUsd);
+    return r;
+  };
   const result: PipelineResult = {
     rights: { passed: false, issues: [], warnings: [] },
     published: false,
@@ -44,14 +52,15 @@ export async function runPipeline(job: MediaJob, registry: Registry): Promise<Pi
   };
 
   // 1. Script (local LLM — unlimited)
-  const script = await generate({ modality: 'llm', input: scriptPrompt(job.topic) }, registry);
+  const script = track(
+    await generate({ modality: 'llm', input: scriptPrompt(job.topic) }, registry)
+  );
   result.script = script.text;
   log.push(`script via ${script.providerId} (${script.providerType})`);
 
   // 2. Storyboard
-  const storyboard = await generate(
-    { modality: 'llm', input: storyboardPrompt(result.script!) },
-    registry
+  const storyboard = track(
+    await generate({ modality: 'llm', input: storyboardPrompt(result.script!) }, registry)
   );
   result.storyboard = storyboard.text;
   log.push(`storyboard via ${storyboard.providerId} (${storyboard.providerType})`);
@@ -61,9 +70,11 @@ export async function runPipeline(job: MediaJob, registry: Registry): Promise<Pi
   log.push(`seo metadata: "${result.seo.title}"`);
 
   // 4. Voiceover (local TTS)
-  const voice = await generate(
-    { modality: 'tts', input: result.script, options: { voice: 'default' } },
-    registry
+  const voice = track(
+    await generate(
+      { modality: 'tts', input: result.script, options: { voice: 'default' } },
+      registry
+    )
   );
   result.voiceoverPath = voice.artifactPath;
   log.push(`voiceover via ${voice.providerId} (${voice.providerType})`);
@@ -72,13 +83,15 @@ export async function runPipeline(job: MediaJob, registry: Registry): Promise<Pi
   const shots = parseStoryboard(result.storyboard!);
   for (const shot of shots) {
     try {
-      const img = await generate(
-        {
-          modality: 'image',
-          input: `Cinematic still for a video shot: "${shot.visualDescription ?? shot.text}". 16:9 composition, no text.`,
-          options: { width: 1280, height: 720 },
-        },
-        registry
+      const img = track(
+        await generate(
+          {
+            modality: 'image',
+            input: `Cinematic still for a video shot: "${shot.visualDescription ?? shot.text}". 16:9 composition, no text.`,
+            options: { width: 1280, height: 720 },
+          },
+          registry
+        )
       );
       shot.imagePath = img.artifactPath;
       log.push(`image for ${shot.label} via ${img.providerId} (${img.providerType})`);
@@ -90,9 +103,11 @@ export async function runPipeline(job: MediaJob, registry: Registry): Promise<Pi
   // 6. Video generation (external first if configured; local floor otherwise)
   let videoPath: string | undefined;
   try {
-    const video = await generate(
-      { modality: 'video', input: result.storyboard, allowExternal: true },
-      registry
+    const video = track(
+      await generate(
+        { modality: 'video', input: result.storyboard, allowExternal: true },
+        registry
+      )
     );
     videoPath = video.artifactPath;
     log.push(`video via ${video.providerId} (${video.providerType})`);
@@ -107,6 +122,36 @@ export async function runPipeline(job: MediaJob, registry: Registry): Promise<Pi
     result.renderedPath = await renderStoryboard(shots, result.voiceoverPath);
   }
   log.push('render via ffmpeg (local)');
+
+  // 7½. Optional presenter intro (external avatar API — your key, their limits).
+  //      If the avatar provider is unavailable, we continue WITHOUT it:
+  //      the agent never goes down with an external API.
+  if (job.presenter) {
+    try {
+      const intro = track(
+        await generate(
+          {
+            modality: 'avatar',
+            input: `In one or two friendly sentences, introduce a video titled "${result.seo.title}". Be direct and warm.`,
+            allowExternal: true,
+          },
+          registry
+        )
+      );
+      result.renderedPath = await concatWithIntro(intro.artifactPath!, result.renderedPath!);
+      log.push(`presenter intro via ${intro.providerId} (${intro.providerType} — provider limits apply)`);
+    } catch (err) {
+      log.push(`presenter intro unavailable — continuing without it (${(err as Error).message})`);
+    }
+  }
+
+  // Spend summary — observability ONLY, never enforced
+  result.externalSpendUsd = Math.round(spendings.reduce((s, x) => s + x, 0) * 100) / 100;
+  if (result.externalSpendUsd > 0) {
+    log.push(
+      `external spend estimate: $${result.externalSpendUsd.toFixed(2)} (observability only — our software meters nothing)`
+    );
+  }
 
   // 8. Thumbnail (local LLM + local image + ffmpeg overlay)
   if (job.makeThumbnail !== false) {

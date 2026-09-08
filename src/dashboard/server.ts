@@ -32,6 +32,15 @@ export function startDashboard(queue: AnyQueue): http.Server {
         return json(200, counts);
       }
 
+      if (url.pathname === '/api/spend') {
+        const jobs = await queue.getCompleted(0, 199);
+        const spend = jobs.reduce(
+          (sum, j) => sum + (Number((j.returnvalue as { externalSpendUsd?: number })?.externalSpendUsd) || 0),
+          0
+        );
+        return json(200, { spendUsd: Math.round(spend * 100) / 100 });
+      }
+
       if (url.pathname === '/api/completed') {
         const jobs = await queue.getCompleted(0, 19);
         return json(200, jobs.map((j) => ({

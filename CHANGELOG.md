@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.3.0 — Presenter + spend observability (2026-09-08)
+
+- Avatar presenter connector (HeyGen v2 API: submit → poll → download),
+  vendor-gated via AVATAR_VENDOR, bring-your-own-key.
+- `--presenter` pipeline step: intro clip normalized (1080p/25fps/stereo)
+  and prepended locally via FFmpeg. If the avatar provider is unavailable,
+  the video continues without it — the agent never goes down with an API.
+- External spend observability: SPEND_ESTIMATE_* env estimates surface per
+  job (`externalSpendUsd`) and as a dashboard tile. Observability ONLY —
+  our software meters nothing, ever.
+- SAAS.md: hard boundary between the MIT core and any future commercial
+  wrapper (no metering in the core, local path never removed).
+
+
 ## 0.2.0 — Scheduled publishing (2026-09-08)
 
 - `--publish-at` flag on the CLI — schedule a video for a future time.

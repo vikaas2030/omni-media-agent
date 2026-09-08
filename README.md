@@ -106,6 +106,6 @@ Everything is optional — local-only works out of the box with zero keys. See [
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) — the "no metering, local-first, graceful fallback" rules are non-negotiable for merge.
 
-## License
+## Commercial use
 
-[MIT](LICENSE) — free forever. A commercial SaaS wrapper is explicitly allowed later; the core stays open and unlimited.
+[MIT](LICENSE) — free forever. A commercial SaaS wrapper is explicitly allowed, but only within the boundary rules in [SAAS.md](SAAS.md): the core stays open and unlimited, metering lives in a separate service, never here.

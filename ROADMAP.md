@@ -36,7 +36,9 @@
 - [x] Avatar API connector — key-gated stub (vendors differ; implement against yours)
 - [x] Config-order routing made authoritative: video = Veo → Seedance → LTX → local FFmpeg floor
       (external first for quality when a key exists; zero keys = pure local, never broken)
-- [ ] Per-connector external spend *observability* (never enforcement) — optional, on request
+- [x] Per-connector external spend *observability* — SPEND_ESTIMATE_* env estimates, per-job spend in results, dashboard spend tile. Observability ONLY, never enforcement
+- [x] Avatar presenter connector — HeyGen v2 API (submit → poll → download), vendor-gated
+- [x] Presenter pipeline step (--presenter) — intro concat with normalization, falls back gracefully
 
 ## Phase 5 — Hardening & open-sourcing (release-ready)
 - [x] MIT license, CONTRIBUTING.md with non-negotiables (no metering, local-first, fallback)
@@ -48,5 +50,6 @@
 - [ ] Push to public GitHub repo (needs your account): git init + commit done — add remote & push
 - [ ] Scheduled publishing (publish_at)
 
-## Phase 6 — Optional SaaS wrapper (later)
+## Phase 6 — Optional SaaS
+- [x] Boundary documented in SAAS.md — core stays MIT + unlimited forever; commercial wrapper must be a separate service wrapper (later)
 - [ ] Multi-tenant hosting, billing — the core stays open and unlimited
