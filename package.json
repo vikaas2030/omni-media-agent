@@ -1,0 +1,35 @@
+{
+  "name": "omni-media-agent",
+  "version": "0.1.0",
+  "description": "Open-source media super agent — local-first, no artificial credits, pluggable external models",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YOUR_GITHUB_USERNAME/omni-media-agent"
+  },
+  "main": "dist/queue/worker.js",
+  "bin": {
+    "omni": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/queue/worker.js",
+    "dev": "tsx src/queue/worker.ts",
+    "cli": "tsx src/cli.ts",
+    "typecheck": "tsc --noEmit -p tsconfig.test.json",
+    "test": "node --import tsx --test tests/*.test.ts"
+  },
+  "dependencies": {
+    "bullmq": "^5.12.0",
+    "ioredis": "^5.4.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "tsx": "^4.15.0",
+    "typescript": "^5.5.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

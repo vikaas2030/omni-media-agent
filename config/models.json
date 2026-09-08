@@ -1,0 +1,18 @@
+{
+  "$comment": "Routing chains per modality. Tried in order — fallback goes down the list. Prefix local: or external:",
+  "routing": {
+    "llm": ["local:ollama"],
+    "image": ["local:comfyui", "external:stub"],
+    "stt": ["local:whisper"],
+    "tts": ["local:piper"],
+    "video": ["external:stub", "local:ffmpeg-anim"],
+    "avatar": ["external:stub"],
+    "render": ["local:ffmpeg-render"]
+  },
+  "externalProviders": [
+    { "id": "seedance", "modality": "video", "envKey": "SEEDANCE_API_KEY", "limitsNote": "Seedance provider limits & fees apply" },
+    { "id": "ltx", "modality": "video", "envKey": "LTX_API_KEY", "limitsNote": "LTX provider limits & fees apply" },
+    { "id": "veo-flow", "modality": "video", "envKey": "VEO_API_KEY", "limitsNote": "Google Flow/Veo provider limits & fees apply" },
+    { "id": "avatar-api", "modality": "avatar", "envKey": "AVATAR_API_KEY", "limitsNote": "Avatar provider limits & fees apply" }
+  ]
+}
