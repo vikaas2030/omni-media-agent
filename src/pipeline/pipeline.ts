@@ -7,6 +7,9 @@ import { generateThumbnail } from './thumbnail.js';
 import { Publisher, getPublisher } from '../publish/publishers.js';
 import { createApproval } from '../approval/approvals.js';
 import { concatWithIntro } from './concat.js';
+import { scriptPrompt, storyboardPrompt, platformPreset } from '../core/prompts.js';
+import { generateBest } from '../core/quality.js';
+import { ffprobeVerify, RenderCheck, validateScript, validateStoryboard } from '../core/validate.js';
 
 export interface MediaJob {
   topic: string;
@@ -31,6 +34,7 @@ export interface PipelineResult {
   published: boolean;
   approvalId?: string;
   externalSpendUsd?: number; // observability ONLY — our software meters nothing
+  renderCheck?: RenderCheck;
   log: string[];
 }
 
@@ -51,19 +55,33 @@ export async function runPipeline(job: MediaJob, registry: Registry): Promise<Pi
     log,
   };
 
-  // 1. Script (local LLM — unlimited)
-  const script = track(
-    await generate({ modality: 'llm', input: scriptPrompt(job.topic) }, registry)
-  );
-  result.script = script.text;
-  log.push(`script via ${script.providerId} (${script.providerType})`);
+  const preset = platformPreset(job.platform);
 
-  // 2. Storyboard
-  const storyboard = track(
-    await generate({ modality: 'llm', input: storyboardPrompt(result.script!) }, registry)
-  );
-  result.storyboard = storyboard.text;
-  log.push(`storyboard via ${storyboard.providerId} (${storyboard.providerType})`);
+  // 1. Script — expert prompt + quality gate (validate → critique → refine)
+  const scriptOut = await generateBest({
+    kind: 'script',
+    firstPrompt: scriptPrompt(job.topic, job.platform),
+    platform: job.platform,
+    validate: (t) => validateScript(t, job.platform),
+    registry,
+  });
+  result.script = scriptOut.text;
+  if (scriptOut.externalCostUsd) spendings.push(scriptOut.externalCostUsd);
+  log.push(`script: ${scriptOut.attempts} attempt(s), critique ${scriptOut.score}/10`);
+  log.push(...scriptOut.log);
+
+  // 2. Storyboard — same gate
+  const boardOut = await generateBest({
+    kind: 'storyboard',
+    firstPrompt: storyboardPrompt(result.script!, job.platform),
+    platform: job.platform,
+    validate: (t) => validateStoryboard(t, job.platform),
+    registry,
+  });
+  result.storyboard = boardOut.text;
+  if (boardOut.externalCostUsd) spendings.push(boardOut.externalCostUsd);
+  log.push(`storyboard: ${boardOut.attempts} attempt(s), critique ${boardOut.score}/10`);
+  log.push(...boardOut.log);
 
   // 3. SEO metadata (title / description / tags — local LLM)
   result.seo = await generateSeoMetadata(job.topic, result.script!, registry);
@@ -122,6 +140,22 @@ export async function runPipeline(job: MediaJob, registry: Registry): Promise<Pi
     result.renderedPath = await renderStoryboard(shots, result.voiceoverPath);
   }
   log.push('render via ffmpeg (local)');
+
+  // 7⅓. Verify the render is actually publishable media
+  result.renderCheck = await ffprobeVerify(result.renderedPath!, {
+    minSeconds: preset.targetSeconds * 0.4,
+    requireAudio: Boolean(result.voiceoverPath),
+  });
+  if (result.renderCheck.info) {
+    const i = result.renderCheck.info;
+    log.push(
+      `render verified: ${i.width}x${i.height}, ${i.durationSeconds.toFixed(1)}s, audio=${i.hasAudio}`
+    );
+  }
+  for (const w of result.renderCheck.warnings) log.push(`render warning: ${w}`);
+  if (!result.renderCheck.ok) {
+    throw new Error(`render verification failed: ${result.renderCheck.issues.join(' | ')}`);
+  }
 
   // 7½. Optional presenter intro (external avatar API — your key, their limits).
   //      If the avatar provider is unavailable, we continue WITHOUT it:
@@ -213,14 +247,6 @@ export async function runPipeline(job: MediaJob, registry: Registry): Promise<Pi
   result.published = true;
   log.push(`published to ${job.platform}`);
   return result;
-}
-
-function scriptPrompt(topic: string): string {
-  return `Write a short, engaging 60-second video script about: ${topic}. Hook in the first 3 seconds.`;
-}
-
-function storyboardPrompt(script: string): string {
-  return `Break this script into a shot-by-shot storyboard. One line per shot, format: "Shot N: [visual description] on-screen: [short text cue]". Maximum 10 shots.\n\n${script}`;
 }
 
 async function mux(videoPath: string, audioPath?: string): Promise<string> {

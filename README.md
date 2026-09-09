@@ -1,6 +1,6 @@
 # VIKAAS OMNI MEDIA SUPER AGENT — Open Source Edition
 
-[![CI](https://github.com/YOUR_GITHUB_USERNAME/omni-media-agent/actions/workflows/ci.yml/badge.svg)](../../actions)
+[![CI](https://github.com/vikaas2030/omni-media-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/vikaas2030/omni-media-agent/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-2ea44f.svg)](LICENSE)
 
 An open-source, self-hostable media super agent:

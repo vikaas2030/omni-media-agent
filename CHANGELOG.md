@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.4.0 — Quality & reliability pass (2026-09-09)
+
+- Expert prompt templates + platform presets (YouTube / Reels / Facebook):
+  hook rules, word budgets, tone guides, exact storyboard format.
+- Quality gate (`src/core/quality.ts`): every script and storyboard is
+  validated, critiqued 1-10 by a strict LLM editor pass, and rewritten with
+  the feedback until it clears the bar. Best attempt always wins; a valid
+  draft passes on its own merits if the critique pass is unavailable.
+  Env: `QUALITY_MIN_SCORE` (default 7), `QUALITY_MAX_ATTEMPTS` (default 3).
+- Render verification: ffprobe checks the finished file (video stream,
+  duration, audio) before publishing — corrupt or empty renders now fail
+  loudly instead of going public. ffprobe absent → warning, not a crash.
+- Router: per-provider transient-failure retry (default 1) before falling
+  down the chain, so a socket blip no longer degrades output quality.
+- 11 new tests (prompts, validation, quality gate). Real repo URL everywhere.
+
 ## 0.3.0 — Presenter + spend observability (2026-09-08)
 
 - Avatar presenter connector (HeyGen v2 API: submit → poll → download),

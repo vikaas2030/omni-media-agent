@@ -1,12 +1,12 @@
 {
   "name": "omni-media-agent",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Open-source media super agent \u2014 local-first, no artificial credits, pluggable external models",
   "type": "module",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/YOUR_GITHUB_USERNAME/omni-media-agent"
+    "url": "https://github.com/vikaas2030/omni-media-agent"
   },
   "main": "dist/queue/worker.js",
   "bin": {
