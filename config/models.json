@@ -4,8 +4,8 @@
     "llm": ["local:ollama"],
     "image": ["local:comfyui"],
     "stt": ["local:whisper"],
-    "tts": ["local:piper"],
-    "video": ["external:veo", "external:seedance", "external:ltx", "local:ffmpeg-anim"],
+    "tts": ["local:xtts", "local:piper"],
+    "video": ["local:comfy-i2v", "external:veo", "external:seedance", "external:ltx", "local:ffmpeg-anim"],
     "avatar": ["external:avatar-api"]
   }
 }

@@ -3,6 +3,8 @@ import { promisify } from 'util';
 import { existsSync, readFileSync } from 'fs';
 import { Provider, GenerationRequest, GenerationResult } from '../core/types.js';
 import { ComfyUiProvider } from './comfyui.js';
+import { ComfyI2vProvider } from './i2v.js';
+import { XttsProvider } from './xtts.js';
 
 const exec = promisify(execFile);
 
@@ -151,6 +153,8 @@ class FfmpegAnimProvider implements Provider {
 }
 
 export const localProviders: Provider[] = [
+  new ComfyI2vProvider(),
+  new XttsProvider(),
   new OllamaProvider(),
   new WhisperProvider(),
   new PiperProvider(),

@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.5.0 — Movie Mode: free cinematic pipeline (2026-09-10)
+
+- **Movie Mode** (`src/movie/`): screenplay → real animated film, 100% free
+  resources, `allowExternal:false` enforced — a paid API is never contacted.
+- Screenplay parser: `# MOVIE / # CAST / ## SCENE / SETTING / ACTION /
+  NAME (emotion): dialogue` format, narration support.
+- Director: shot planner — establishing + action beats + one animated shot
+  per spoken line with character/emotion-aware image + motion prompts.
+- Local I2V animation: ComfyUI Wan 2.1/2.2 image-to-video provider
+  (`local:comfy-i2v`) with editable workflow template ({{PROMPT}}/{{IMAGE}}/
+  {{FRAMES}} placeholders, WAN_I2V_WORKFLOW override). Free video chain is
+  now FIRST: local I2V → optional externals → ffmpeg floor.
+- Emotional Hindi TTS: Coqui XTTS provider (`local:xtts`) with per-character
+  reference voices (MOVIE_VOICE_<NAME>).
+- Lip-sync: Wav2Lip / LatentSync runners (LIPSYNC_ENGINE), honest voice-over
+  fallback with a warning — never fake lip movement silently.
+- Colab notebook for $0 GPU compute; FREE-STACK.md documents the whole
+  free stack and free-GPU options. 3 new tests (41 total).
+
 ## 0.4.0 — Quality & reliability pass (2026-09-09)
 
 - Expert prompt templates + platform presets (YouTube / Reels / Facebook):
