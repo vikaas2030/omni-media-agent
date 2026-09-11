@@ -22,7 +22,8 @@ export interface LipSyncResult {
 
 async function muxVoice(videoPath: string, audioPath: string): Promise<string> {
   const out = `/tmp/omni-vo-${Date.now()}.mp4`;
-  await exec('ffmpeg', ['-y', '-v', 'error', '-i', videoPath, '-i', audioPath,
+  // loop the animated shot so the FULL dialogue plays — -shortest would truncate it
+  await exec('ffmpeg', ['-y', '-v', 'error', '-stream_loop', '-1', '-i', videoPath, '-i', audioPath,
     '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-c:a', 'aac', '-shortest', out]);
   return out;
 }

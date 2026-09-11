@@ -52,7 +52,8 @@ export class ComfyI2vProvider implements Provider {
     if (!input?.imagePath || !input?.motionPrompt) {
       throw new Error('I2V input needs { imagePath, motionPrompt }');
     }
-    const seconds = Math.max(2, Math.min(15, Number(req.options?.seconds as number) ?? 5));
+    const maxSec = Number(env('WAN_I2V_MAX_SECONDS', '5'));
+    const seconds = Math.max(2, Math.min(maxSec, Number(req.options?.seconds as number) ?? maxSec));
     // Wan models run at 16fps and need frame counts like 33/49/65/81
     const frames = Math.max(33, Math.round((seconds * 16 + 1) / 16) * 16 + 1);
 

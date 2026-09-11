@@ -31,6 +31,10 @@ export interface MovieJob {
   style?: string;
   /** free/open-licensed background music (path). None = no music, we never fake rights. */
   bgMusic?: string;
+  /** render only the first N scenes (proof render / slow GPU) */
+  scenes?: number;
+  /** pre-made stills: files named shot-<id>.png — skips image generation (bring-your-own art) */
+  stillsDir?: string;
 }
 
 export interface MovieResult {
@@ -79,7 +83,9 @@ async function concatClips(clips: string[], out: string): Promise<void> {
 export async function runMovie(job: MovieJob, registry: Registry): Promise<MovieResult> {
   const log: string[] = [];
   const sp = parseScreenplay(job.screenplay);
-  const shots: MovieShot[] = planShots(sp, job.style);
+  const maxScenes = job.scenes ?? Number.MAX_SAFE_INTEGER;
+  const shots: MovieShot[] = planShots(sp, job.style)
+    .filter((sh) => sh.sceneIndex <= maxScenes);
   const doPolish = env('MOVIE_POLISH', '1') === '1';
   log.push(`"${sp.title}" — ${sp.scenes.length} scenes, ${shots.length} shots planned`);
 
@@ -90,19 +96,26 @@ export async function runMovie(job: MovieJob, registry: Registry): Promise<Movie
   let cursor = 0; // seconds in the final movie
 
   for (const shot of shots) {
-    // 1. Still frame (free local image model)
-    const still = await generate({
-      modality: 'image',
-      input: shot.imagePrompt,
-      options: { width: 1280, height: 720 },
-      allowExternal: false,
-    }, registry);
-    log.push(`shot ${shot.id} (${shot.kind}): still via ${still.providerId}`);
+    // 1. Still frame — pre-made art if provided, else free local image model
+    let stillPath: string | undefined;
+    if (job.stillsDir && existsSync(`${job.stillsDir}/shot-${shot.id}.png`)) {
+      stillPath = `${job.stillsDir}/shot-${shot.id}.png`;
+      log.push(`shot ${shot.id} (${shot.kind}): still (pre-made art)`);
+    } else {
+      const still = await generate({
+        modality: 'image',
+        input: shot.imagePrompt,
+        options: { width: 1280, height: 720 },
+        allowExternal: false,
+      }, registry);
+      stillPath = still.artifactPath;
+      log.push(`shot ${shot.id} (${shot.kind}): still via ${still.providerId}`);
+    }
 
     // 2. Animate the still (free local I2V — Wan/LTX in ComfyUI)
     const anim = await generate({
       modality: 'video',
-      input: JSON.stringify({ imagePath: still.artifactPath, motionPrompt: shot.motionPrompt }),
+      input: JSON.stringify({ imagePath: stillPath, motionPrompt: shot.motionPrompt }),
       options: { seconds: shot.estSeconds, width: 1280, height: 720 },
       allowExternal: false, // NEVER a paid API in Movie Mode
     }, registry);
