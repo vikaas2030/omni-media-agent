@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.6.0 — Full Force Edition: free GPU bridge + best-in-class modules (2026-09-11)
+
+- **Colab FREE-GPU bridge notebook v2**: public URLs via Colab's own kernel
+  proxy (no account, $0) — the agent drives a Colab T4 remotely through
+  COMFYUI_URL / XTTS_SERVER_URL.
+- **Movie auto-writer**: Ollama writes the full screenplay, parser-validated
+  with a rewrite-until-clean loop (writer.ts). Topic in → movie script out.
+- **Post-production polish**: RIFE 25fps smoothing + Real-ESRGAN 1080p
+  upscale (polish.ts) — honest skip-with-warning if not installed.
+- **Auto-Shorts**: one movie → best 3 vertical 9:16 clips, scored by
+  emotion + drama (shorts.ts), rendered free via FFmpeg.
+- **Subtitles**: .srt built from our own lines + shot timings (subtitles.ts).
+- Pipeline: polish + srt + optional shorts (MOVIE_MAKE_SHORTS=1).
+- 5 new tests (46 total). Still zero paid APIs — allowExternal:false enforced.
+
 ## 0.5.0 — Movie Mode: free cinematic pipeline (2026-09-10)
 
 - **Movie Mode** (`src/movie/`): screenplay → real animated film, 100% free
