@@ -48,9 +48,30 @@ async function probeDuration(path: string): Promise<number> {
   return parseFloat(out.stdout.trim()) || 0;
 }
 
+async function hasAudio(path: string): Promise<boolean> {
+  try {
+    const out = await exec('ffprobe', ['-v', 'error', '-select_streams', 'a',
+      '-show_entries', 'stream=codec_type', '-of', 'csv=p=0', path]);
+    return out.stdout.trim().length > 0;
+  } catch {
+    return false;
+  }
+}
+
 async function concatClips(clips: string[], out: string): Promise<void> {
+  // Wan/LTX I2V clips carry NO audio track; lip-synced clips do. The concat
+  // demuxer needs consistent streams — give every silent clip a silent AAC track.
+  const norm: string[] = [];
+  for (const c of clips) {
+    if (await hasAudio(c)) { norm.push(c); continue; }
+    const n = `/tmp/omni-silent-${Date.now()}.mp4`;
+    await exec('ffmpeg', ['-y', '-v', 'error', '-i', c,
+      '-f', 'lavfi', '-i', 'anullsrc=channel_layout=stereo:sample_rate=44100',
+      '-map', '0:v', '-map', '1:a', '-shortest', '-c:v', 'copy', '-c:a', 'aac', n]);
+    norm.push(n);
+  }
   const list = `/tmp/omni-movie-list-${Date.now()}.txt`;
-  writeFileSync(list, clips.map((c) => `file '${c}'`).join('\n'));
+  writeFileSync(list, norm.map((c) => `file '${c}'`).join('\n'));
   await exec('ffmpeg', ['-y', '-v', 'error', '-f', 'concat', '-safe', '0', '-i', list,
     '-c:v', 'libx264', '-preset', 'fast', '-crf', '22', '-c:a', 'aac', '-movflags', '+faststart', out]);
 }
