@@ -46,6 +46,7 @@ export class XttsProvider implements Provider {
       body: JSON.stringify({
         text,
         language: env('XTTS_LANGUAGE', 'hi'),
+        voice, // character name — lets the server pick a per-character voice (e.g. edge-tts mode)
         ...(speakerWav ? { speaker_wav: speakerWav } : {}),
       }),
     });
