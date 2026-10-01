@@ -66,7 +66,8 @@ async function main() {
   writeFileSync(list, norm.map((c) => `file '${c}'`).join('\n'));
   const finalPath = `${outPrefix}.mp4`;
   await exec('ffmpeg', ['-y', '-v', 'error', '-f', 'concat', '-safe', '0', '-i', list,
-    '-c:v', 'libx264', '-preset', 'fast', '-crf', '22', '-c:a', 'aac', '-movflags', '+faststart', finalPath]);
+    '-c:v', 'libx264', '-preset', 'fast', '-crf', '22',
+      '-af', 'loudnorm=I=-16:TP=-1.5:LRA=11', '-c:a', 'aac', '-movflags', '+faststart', finalPath]);
 
   const srtPath = `${outPrefix}.srt`;
   writeFileSync(srtPath, buildSrt(srtEntries));

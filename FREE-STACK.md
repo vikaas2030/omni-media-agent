@@ -47,3 +47,18 @@ node -e "import('./dist/movie/pipeline.js').then(m => m.runMovie({screenplay: re
 
 Every shot is logged with which FREE provider made it. If something is
 missing, the run fails loudly — it never silently falls back to a paid API.
+
+
+## Cinema Grade quality chain (v0.7.0)
+
+| Stage | Model | Falls back to |
+|---|---|---|
+| Still | SDXL base 1024x576 | - |
+| Animation | Wan 2.1 I2V 480p fp8, 5-8s | - |
+| Voice | Coqui XTTS v2 (fork, py3.13) | edge-tts neural Hindi |
+| Lip-sync | LatentSync 1.6 (diffusion) | Wav2Lip -> voice-over |
+| Smoothness | 32fps mci interpolation | native 16fps |
+| Upscale | Real-ESRGAN animevideo x2 + 1080p | lanczos 1080p |
+
+All free open-source. Every stage reports which engine actually ran —
+status files carry `engines`, so a film never claims quality it didn't use.

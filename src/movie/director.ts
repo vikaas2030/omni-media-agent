@@ -40,7 +40,7 @@ export function planShots(
       kind: 'establishing',
       imagePrompt: `${style}. Establishing wide shot: ${setting}.`,
       motionPrompt:
-        'slow cinematic camera push-in, subtle drift, dust particles moving in light, cloth and hair moving in wind',
+        'slow cinematic camera push-in, subtle drift, dust particles moving in light, cloth and hair moving in wind, gentle cloth physics, faint embers drifting, subtle depth parallax, atmospheric haze',
       estSeconds: 4,
     });
 
@@ -52,7 +52,7 @@ export function planShots(
         sceneTitle: scene.title,
         kind: 'action',
         imagePrompt: `${style}. ${setting}. ${scene.action}`,
-        motionPrompt: `${scene.action}. Dynamic camera follows the action, natural physical movement, cinematic energy`,
+        motionPrompt: `${scene.action}. Dynamic camera follows the action, natural physical movement, weight and momentum in every step, cloth and hair reacting to motion, cinematic energy`,
         estSeconds: 5,
       });
     }
@@ -71,8 +71,8 @@ export function planShots(
         kind: 'dialogue',
         imagePrompt: `${style}. ${setting}. Medium shot of ${who}, ${expression}.`,
         motionPrompt: d.isNarration
-          ? 'slow pan across the scene, atmospheric haze moving, cinematic'
-          : `the character speaks these words naturally: "${d.line.slice(0, 90)}". Lips articulate clearly, natural head and hand gestures, ${d.emotion || 'emotional'} energy, steady camera`,
+          ? 'slow pan across the scene, atmospheric haze moving, cinematic, mist drifting slowly, subtle parallax depth, light rays shifting'
+          : `the character speaks these words naturally: "${d.line.slice(0, 90)}". Lips articulate clearly, natural head and hand gestures, natural breathing, subtle blinking, micro head movements while speaking, expressive eyes, ${d.emotion || 'emotional'} energy, steady cinematic camera`,
         character: d.character,
         emotion: d.emotion,
         line: d.line,

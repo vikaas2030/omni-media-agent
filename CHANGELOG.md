@@ -1,3 +1,17 @@
+## 0.7.0 — Cinema Grade (Oct 2026)
+
+Match top-rated video models' quality on the FREE stack:
+- Worker pipeline now: SDXL still -> Wan I2V animation -> lip-sync chain
+  (LatentSync diffusion lip-sync > Wav2Lip > honest voice-over) ->
+  32fps motion-compensated interpolation -> 1080p upscale
+  (Real-ESRGAN video x2 + lanczos, lanczos fallback) -> Drive
+- LatentSync 1.6 (best open lip-sync) + Real-ESRGAN video in Colab quality
+  pack cell, best-effort install with graceful fallbacks — never fake
+- Director prompts upgraded: breathing, blinking, cloth physics, parallax
+- Dialogue shots 5-8s (81 frames), establishing/action 5s
+- Final film audio EBU R128 loudness-normalized (broadcast standard)
+- Colab VRAM discipline: ComfyUI /free unload before lip-sync subprocess
+
 # Changelog
 
 ## 0.6.0 — Full Force Edition: free GPU bridge + best-in-class modules (2026-09-11)
