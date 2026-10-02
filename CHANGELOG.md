@@ -1,3 +1,14 @@
+## 0.8.0 — Wan 2.2 Engine (Oct 2026)
+
+Upgraded the animation model to the current top open I2V: Wan 2.2 TI2V-5B
+fp8 (Alibaba, Apache 2.0) — better motion/faces than Wan 2.1 9.5B AND
+~2x faster (5B active params), fits free Colab T4 (8GB VRAM floor).
+- Official comfy.org TI2V graph: UNETLoader -> ModelSamplingSD3 (shift 3)
+  -> KSampler -> CreateVideo/SaveVideo; CLIP Vision no longer needed
+- New wan_2.2_vae; umt5 fp8 reused; total downloads ~19GB parallel
+- notebook v11: 4-model parallel download, self-healing pre-flight
+- 0.7.0's KSampler fix folded in (earlier graph decoded raw noise)
+
 ## 0.7.0 — Cinema Grade (Oct 2026)
 
 Match top-rated video models' quality on the FREE stack:
