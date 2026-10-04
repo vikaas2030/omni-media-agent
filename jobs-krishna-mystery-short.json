@@ -1,0 +1,152 @@
+[
+ {
+  "id": "0001",
+  "kind": "krishna-mystery-short",
+  "ratio": "9:16",
+  "seconds": 4,
+  "imagePrompt": "Cinematic vertical shot, dark stormy night over a vast ocean, huge waves crashing, distant golden silhouette of ancient Indian city Dwarka partially sunken in sea, moonlight through storm clouds, photorealistic, epic scale, mysterious mood",
+  "motionPrompt": "dark ocean waves surging, storm clouds drifting slowly, distant golden city shimmering, camera slowly pushing forward, cinematic",
+  "line": "क्या आपने कभी सोचा... श्रीकृष्ण का अंत कैसे हुआ?",
+  "character": "narrator"
+ },
+ {
+  "id": "0002",
+  "kind": "krishna-mystery-short",
+  "ratio": "9:16",
+  "seconds": 4,
+  "imagePrompt": "Indian deity Krishna with blue skin and peacock feather crown, golden silk dhoti, sitting in deep meditation under a giant banyan tree at dusk, serene divine face, soft golden rim light, photorealistic, vertical composition",
+  "motionPrompt": "gentle breeze moving leaves, hair strands swaying, soft golden light flickering, camera slowly pushing in on serene face",
+  "line": "जिसे कोई राजा पराजित नहीं कर पाया...",
+  "character": "narrator"
+ },
+ {
+  "id": "0003",
+  "kind": "krishna-mystery-short",
+  "ratio": "9:16",
+  "seconds": 4,
+  "imagePrompt": "Indian tribal hunter with drawn bow hiding behind dense forest bushes aiming into the distance, golden dusk light filtering through trees, tense atmosphere, photorealistic, vertical",
+  "motionPrompt": "hunter steadying his aim, leaves rustling in wind, subtle tension, slow zoom toward target",
+  "line": "फिर एक शिकारी का तीर... उन तक कैसे पहुँचा?",
+  "character": "narrator"
+ },
+ {
+  "id": "0004",
+  "kind": "krishna-mystery-short",
+  "ratio": "9:16",
+  "seconds": 4,
+  "imagePrompt": "A single arrow flying through misty forest air at dusk, motion blur, dramatic god rays between dark trees, cinematic tension, vertical composition",
+  "motionPrompt": "arrow flying forward with motion blur, mist swirling around it, dramatic slow motion feel",
+  "line": "क्या यह संयोग था... या लीला?",
+  "character": "narrator"
+ },
+ {
+  "id": "0005",
+  "kind": "krishna-mystery-short",
+  "ratio": "9:16",
+  "seconds": 4,
+  "imagePrompt": "A single radiant peacock feather floating in golden divine light against a dark background, glowing particles, elegant cinematic backdrop, vertical",
+  "motionPrompt": "feather slowly rotating and floating upward, golden particles drifting, divine light pulsing gently",
+  "line": "कृष्ण के अंतिम क्षणों का रहस्य।",
+  "character": "narrator"
+ },
+ {
+  "id": "0006",
+  "kind": "krishna-mystery-short",
+  "ratio": "9:16",
+  "seconds": 4,
+  "imagePrompt": "Epic ancient Indian battlefield in chaos, warriors fighting with swords and maces, dust clouds and embers, ominous dark red sky, tragic epic tone, photorealistic, vertical",
+  "motionPrompt": "warriors clashing, dust clouds rolling, embers flying through air, slight camera shake, epic chaos",
+  "line": "मौसल पर्व की कथा — यादव वंश का विनाश।",
+  "character": "narrator"
+ },
+ {
+  "id": "0007",
+  "kind": "krishna-mystery-short",
+  "ratio": "9:16",
+  "seconds": 4,
+  "imagePrompt": "Lord Krishna with blue skin seen from behind walking alone away from a distant burning city toward a dark peaceful forest, golden dhoti glowing in dusk light, emotional cinematic mood, vertical",
+  "motionPrompt": "walking slowly away, dhoti flowing in wind, distant fire glow flickering, camera following gently",
+  "line": "श्रीकृष्ण समझ गए... लीला अब अंतिम चरण में है।",
+  "character": "narrator"
+ },
+ {
+  "id": "0008",
+  "kind": "krishna-mystery-short",
+  "ratio": "9:16",
+  "seconds": 4,
+  "imagePrompt": "Peaceful sacred forest clearing with a giant banyan tree, golden sunset light rays through leaves, distant birds, calm divine atmosphere, vertical",
+  "motionPrompt": "light rays shifting through leaves, grass swaying, serene atmosphere, slow pan upward",
+  "line": "न सेना... न शत्रु। बस एक शांत वन... और श्रीकृष्ण।",
+  "character": "narrator"
+ },
+ {
+  "id": "0009",
+  "kind": "krishna-mystery-short",
+  "ratio": "9:16",
+  "seconds": 4,
+  "imagePrompt": "Close vertical portrait of Krishna with blue skin and peacock feather crown seated calmly under banyan tree, eyes gently closed, divine peaceful smile, warm golden hour light on face, photorealistic",
+  "motionPrompt": "subtle breathing, gentle divine smile forming, warm light flickering softly on face, very slow push in",
+  "line": "जिस कार्य के लिए मैं आया था... वह पूर्ण हो चुका है।",
+  "character": "krishna"
+ },
+ {
+  "id": "00010",
+  "kind": "krishna-mystery-short",
+  "ratio": "9:16",
+  "seconds": 4,
+  "imagePrompt": "Point of view through dense leaves: a bare human foot visible far away in dim forest light looking like a deer behind grass, hunter perspective, vertical",
+  "motionPrompt": "camera peeking through moving leaves, slight handheld sway, focus shifting to the distant foot",
+  "line": "जरा को श्रीकृष्ण का तलवा... हिरण जैसा दिखा।",
+  "character": "narrator"
+ },
+ {
+  "id": "00011",
+  "kind": "krishna-mystery-short",
+  "ratio": "9:16",
+  "seconds": 4,
+  "imagePrompt": "Extreme close up of hunter hands releasing a bowstring at dusk, arrow launching into the air, dramatic rim lighting, dust particles, vertical",
+  "motionPrompt": "bowstring snapping forward, arrow launching into air, slight slow motion, dust particles glowing",
+  "line": "धनुष की प्रत्यंचा... खिंच चुकी थी।",
+  "character": "narrator"
+ },
+ {
+  "id": "00012",
+  "kind": "krishna-mystery-short",
+  "ratio": "9:16",
+  "seconds": 4,
+  "imagePrompt": "Emotional cinematic vertical shot: an arrow fallen on forest floor in foreground, Krishna's serene calm face softly lit in background, divine contrast, golden dusk",
+  "motionPrompt": "gentle wind in leaves, soft light breathing on the calm face, dust settling, very slow push toward the face",
+  "line": "तीर लगा... पर उन चेहरे से शांति नहीं गई।",
+  "character": "narrator"
+ },
+ {
+  "id": "00013",
+  "kind": "krishna-mystery-short",
+  "ratio": "9:16",
+  "seconds": 4,
+  "imagePrompt": "Trembling Indian tribal hunter kneeling with folded hands before a serene glowing deity figure, tears in his eyes, dim forest, emotional dramatic lighting, vertical",
+  "motionPrompt": "hunter trembling, folded hands shaking, tears falling, light shifting subtly, emotional",
+  "line": "प्रभु! मुझसे बहुत बड़ा अपराध हो गया... क्षमा कर दीजिए!",
+  "character": "jara"
+ },
+ {
+  "id": "00014",
+  "kind": "krishna-mystery-short",
+  "ratio": "9:16",
+  "seconds": 4,
+  "imagePrompt": "Krishna smiling gently with infinite compassion, soft divine golden light emanating around him, dark forest background, warm divine glow, vertical portrait, photorealistic",
+  "motionPrompt": "soft divine glow pulsing, gentle compassionate smile, light rays slowly intensifying",
+  "line": "जरा, भय मत करो... यह केवल तुम्हारा अपराध नहीं था।",
+  "character": "krishna"
+ },
+ {
+  "id": "00015",
+  "kind": "krishna-mystery-short",
+  "ratio": "9:16",
+  "seconds": 4,
+  "imagePrompt": "Sunrise over calm sea, silhouette of Krishna standing with flute against golden dawn sky, peacock feather in crown glowing, divine serene ending, vertical",
+  "motionPrompt": "sun rising slowly, birds crossing the golden sky, silhouette glow intensifying, peaceful fade feel",
+  "line": "कृष्ण गए नहीं... उनकी कथा आज भी जीवित है। जय श्री कृष्ण।",
+  "character": "narrator"
+ }
+]
