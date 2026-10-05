@@ -2,13 +2,14 @@
   "name": "omnia-mobile",
   "version": "0.9.1",
   "private": true,
-  "description": "Omni Media Agent — Capacitor Android wrapper",
+  "description": "Omni Media Agent \u2014 Capacitor Android wrapper",
   "scripts": {
     "android": "cap sync android && cap open android"
   },
   "devDependencies": {
     "@capacitor/android": "^6.1.0",
     "@capacitor/cli": "^6.1.0",
-    "@capacitor/core": "^6.1.0"
+    "@capacitor/core": "^6.1.0",
+    "typescript": "^5.5.0"
   }
 }
