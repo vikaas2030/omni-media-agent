@@ -90,6 +90,25 @@ export function startDashboard(queue: AnyQueue): http.Server {
         return res.end(data);
       }
 
+      // ---- PWA assets (manifest, service worker, icons) ----
+      const pwaFiles: Record<string, { file: string; type: string }> = {
+        '/manifest.webmanifest': { file: 'manifest.webmanifest', type: 'application/manifest+json' },
+        '/sw.js': { file: 'sw.js', type: 'application/javascript' },
+        '/icon-192.png': { file: 'icon-192.png', type: 'image/png' },
+        '/icon-512.png': { file: 'icon-512.png', type: 'image/png' },
+        '/icon-180.png': { file: 'icon-180.png', type: 'image/png' },
+      };
+      const pwa = pwaFiles[url.pathname];
+      if (pwa) {
+        try {
+          const data = await readFile(new URL('./pwa/' + pwa.file, import.meta.url));
+          res.writeHead(200, { 'Content-Type': pwa.type, 'Cache-Control': 'public, max-age=86400' });
+          return res.end(data);
+        } catch {
+          return json(404, { error: 'pwa asset missing' });
+        }
+      }
+
       // ---- dashboard page ----
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
       return res.end(dashboardHtml());
@@ -122,6 +141,13 @@ function dashboardHtml(): string {
   return `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Omni Media Agent — Dashboard</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#0b1020">
+<link rel="icon" href="/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="/icon-180.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <style>
   :root { color-scheme: dark; }
   body { font-family: system-ui, sans-serif; background: #0b1020; color: #e2e8f0; margin: 0; padding: 24px; }
@@ -140,7 +166,8 @@ function dashboardHtml(): string {
   .log { font-family: ui-monospace, monospace; font-size: 11px; color: #8ea0bf; white-space: pre-wrap; }
   a { color: #7dd3fc; }
 </style></head><body>
-<h1>🎬 Omni Media Agent — Open Source Edition</h1>
+<h1>🎬 Omni Media Agent — Open Source Edition
+<button id="installBtn" style="display:none;vertical-align:middle" onclick="installApp()">📲 Install app</button></h1>
 <div class="stats" id="stats"></div>
 <h2>Pending approvals</h2><div id="approvals"></div>
 <h2>Recent jobs</h2><div id="jobs"></div>
@@ -185,5 +212,24 @@ async function decide(id, decision) {
   refresh();
 }
 refresh(); setInterval(refresh, 5000);
+
+// ---- PWA install ----
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  navigator.serviceWorker.register('/sw.js').catch(() => {});
+}
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault(); deferredPrompt = e;
+  document.getElementById('installBtn').style.display = 'inline-block';
+});
+async function installApp() {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt = null;
+  document.getElementById('installBtn').style.display = 'none';
+}
+window.addEventListener('appinstalled', () => {
+  document.getElementById('installBtn').style.display = 'none';
+});
 </script></body></html>`;
 }

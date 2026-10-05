@@ -1,3 +1,9 @@
+## [0.9.0] — PWA Edition (5 Oct 2026)
+### Added
+- Dashboard is now a full PWA: manifest + service worker + app icons (192/512/180)
+- `📲 Install app` button (beforeinstallprompt), Add-to-Home-Screen ready on iOS/Android/desktop
+- Installable as a standalone web/mobile app — $0, no app store fees
+- Build now copies PWA assets into dist (fixes 404 on served assets)
 ## 0.8.0 — Wan 2.2 Engine (Oct 2026)
 
 Upgraded the animation model to the current top open I2V: Wan 2.2 TI2V-5B

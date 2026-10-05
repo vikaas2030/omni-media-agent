@@ -1,6 +1,6 @@
 {
   "name": "omni-media-agent",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "Open-source media super agent \u2014 local-first, no artificial credits, pluggable external models",
   "type": "module",
   "license": "MIT",
@@ -13,7 +13,7 @@
     "omni": "dist/cli.js"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && node -e \"require('fs').cpSync('src/dashboard/pwa','dist/dashboard/pwa',{recursive:true})\"",
     "start": "node dist/queue/worker.js",
     "dev": "tsx src/queue/worker.ts",
     "cli": "tsx src/cli.ts",

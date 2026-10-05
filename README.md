@@ -96,6 +96,24 @@ Everything is optional — local-only works out of the box with zero keys. See [
 - **External (optional):** `SEEDANCE_API_KEY`, `LTX_API_KEY`, `VEO_API_KEY`, `AVATAR_API_KEY` — a connector activates only when its key exists.
 - **Publishing (your tokens):** YouTube (`YOUTUBE_REFRESH_TOKEN` flow supported), Instagram (`IG_VIDEO_BASE_URL` must be publicly reachable), Facebook Page.
 
+## 📱 Install as an app (web + mobile — $0, no app store)
+The dashboard is a full **PWA (Progressive Web App)** — installable on phone & desktop straight from the browser:
+- **Android / Chrome**: tap `📲 Install app` in the dashboard, or browser menu → *Install app* / *Add to Home screen* → standalone app with its own icon
+- **iOS / Safari**: Share → *Add to Home Screen*
+- **Desktop**: install icon in the address bar
+
+PWA install needs HTTPS (or `localhost`) — see Deploy below. Offline shell caching included; API and media always load live.
+
+## 🌐 Deploy as a web app
+```bash
+# Docker (dashboard port 3000)
+docker compose up --build
+
+# कोई भी Node 20+ host
+npm ci && npm run build && npm start
+```
+Free hosting options: Oracle Cloud Always Free VM, Railway/Render free tier, या अपना VPS। Phones पर PWA install के लिए HTTPS reverse-proxy (Caddy/nginx/Certbot) लगाएँ। Play Store APK चाहिए तो बाद में Capacitor wrapper जोड़ा जा सकता है (optional)।
+
 ## Self-hosting
 
 - `docker compose up` — Redis + Ollama + worker + dashboard
