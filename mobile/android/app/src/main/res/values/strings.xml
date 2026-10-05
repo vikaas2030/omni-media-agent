@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Omni Media Agent</string>
+    <string name="title_activity_main">Omni Media Agent</string>
+    <string name="package_name">com.vikaas.omnia</string>
+    <string name="custom_url_scheme">com.vikaas.omnia</string>
+</resources>

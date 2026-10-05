@@ -1,3 +1,10 @@
+## [0.9.1] — Android App Edition (5 Oct 2026)
+### Added
+- `mobile/`: Capacitor Android wrapper (com.vikaas.omnia) — server-URL setup screen, connects to any self-hosted dashboard
+- Native app icons (adaptive/round/splash) from Omni branding
+- GitHub Actions workflow `android-apk.yml`: debug APK auto-builds on push — Artifacts से download, Android Studio unnecessary
+- Play Store path documented (release AAB + signing setup)
+
 ## [0.9.0] — PWA Edition (5 Oct 2026)
 ### Added
 - Dashboard is now a full PWA: manifest + service worker + app icons (192/512/180)

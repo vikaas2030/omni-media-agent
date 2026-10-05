@@ -112,7 +112,7 @@ docker compose up --build
 # कोई भी Node 20+ host
 npm ci && npm run build && npm start
 ```
-Free hosting options: Oracle Cloud Always Free VM, Railway/Render free tier, या अपना VPS। Phones पर PWA install के लिए HTTPS reverse-proxy (Caddy/nginx/Certbot) लगाएँ। Play Store APK चाहिए तो बाद में Capacitor wrapper जोड़ा जा सकता है (optional)।
+Free hosting options: Oracle Cloud Always Free VM, Railway/Render free tier, या अपना VPS। Phones पर PWA install के लिए HTTPS reverse-proxy (Caddy/nginx/Certbot) लगाएँ। **Play Store वाला असली APK भी ready है**: `mobile/` में Capacitor Android wrapper — GitHub Actions से APK अपने आप build होता है (`mobile/README.md` देखो)।
 
 ## Self-hosting
 
